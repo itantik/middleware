@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Itantik\Middleware;
 
-class Manager
+use Countable;
+
+class Manager implements Countable
 {
     /** @var ITransportLayerFactory */
     private $transportLayerFactory;
@@ -25,6 +27,21 @@ class Manager
     public function prepend(IMiddleware $middleware): void
     {
         array_unshift($this->stack, $middleware);
+    }
+
+    public function clear(): void
+    {
+        $this->stack = [];
+    }
+
+    public function count(): int
+    {
+        return count($this->stack);
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
     }
 
     public function process(IRequest $request, ILayer $coreLayer): IResponse

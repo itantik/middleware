@@ -55,9 +55,16 @@ class Manager extends TestCase
     public function testWithMiddlewares()
     {
         $manager = $this->manager;
+
+        Assert::true($manager->isEmpty(), 'Manager is empty');
+        Assert::count(0, $manager);
+
         $manager->append(new SomeMiddleware('MW1'));
         $manager->append(new SomeMiddleware('MW2'));
         $manager->prepend(new SomeMiddleware('MW0'));
+
+        Assert::false($manager->isEmpty(), 'Manager is not empty');
+        Assert::count(3, $manager);
 
         $coreLayer = new CoreLayer();
         $request = new LoggableRequest();
@@ -79,6 +86,10 @@ class Manager extends TestCase
         Assert::same('MyMiddleware MW2: end', $responseLogs[1]);
         Assert::same('MyMiddleware MW1: end', $responseLogs[2]);
         Assert::same('MyMiddleware MW0: end', $responseLogs[3]);
+
+        $manager->clear();
+        Assert::true($manager->isEmpty(), 'Manager is empty');
+        Assert::count(0, $manager);
     }
 }
 
